@@ -1,0 +1,24 @@
+{% extends "budgetapp/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <h2>Welcome to your Dashboard</h2>
+
+  {% if warning %}
+    <div class="alert alert-warning" style="color: darkorange; font-weight: bold;">
+      {{ warning }}
+    </div>
+  {% endif %}
+
+  <h3>Your Expenses</h3>
+  {% if expenses %}
+    <ul>
+      {% for expense in expenses %}
+        <li>{{ expense.date }} - {{ expense.description }}: ${{ expense.amount }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You haven't logged any expenses yet.</p>
+  {% endif %}
+{% endblock %}
