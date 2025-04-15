@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="signup-box p-4 border rounded bg-light">
+        <h2 class="mb-4 text-center">Sign Up</h2>
+        <form action="{% url 'SignUp' %}" method="post">
+          {% csrf_token %}
+          <!-- Username -->
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required>
+          </div>
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+          </div>
+          <!-- Password Confirmation -->
+          <div class="mb-3">
+            <label for="confirm-password" class="form-label">Password Confirmation</label>
+            <input type="password" id="confirm-password" name="confirm-password" class="form-control" placeholder="Confirm password" required>
+          </div>
+          <!-- Security Questions -->
+          <div class="mb-3">
+            <label for="security1" class="form-label">Security Question #1 - What's your mother's maiden name?</label>
+            <input type="text" id="security1" name="security1" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="security2" class="form-label">Security Question #2 - What year was your father born?</label>
+            <input type="text" id="security2" name="security2" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="security3" class="form-label">Security Question #3 - What's your favorite pet?</label>
+            <input type="text" id="security3" name="security3" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+          {% if template_data.error %}
+          <div class="alert alert-danger mt-3" role="alert">
+            {{ template_data.error }}
+          </div>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

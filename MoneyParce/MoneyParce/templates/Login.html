@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="login-box p-4 border rounded bg-light">
+        <h2 class="mb-4 text-center">Login</h2>
+        <form action="{% url 'Login' %}" method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+          {% if template_data.error %}
+          <div class="alert alert-danger mt-3" role="alert">
+            {{ template_data.error }}
+          </div>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+

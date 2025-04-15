@@ -10,4 +10,7 @@ urlpatterns = [
     path("faqs", include("faqs.urls")),
     path("budget", include("budget.urls")),
     # path('', include('budgetapp.urls')),
+    
+    path("Login", include("Login.urls")),
+    path("SignUp/", include("SignUp.urls")),
 ]
