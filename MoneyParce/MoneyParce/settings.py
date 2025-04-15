@@ -42,8 +42,7 @@ INSTALLED_APPS = [
     "income_and_expenses",
     "overview",
     "faqs",
-    "budget"
-    'MoneyParce',
+    "budget",
 ]
 
 MIDDLEWARE = [
