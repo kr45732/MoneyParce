@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
 
 from .forms import ExpenseForm, IncomeForm
 from .models import Expense, Income
@@ -13,22 +14,9 @@ def dashboard(request):
     })
 
 def transactions(request):
+
     expense_form = ExpenseForm()
     income_form = IncomeForm()
-
-    if request.method == 'POST':
-        if 'add_expense' in request.POST:
-            expense_form = ExpenseForm(request.POST)
-            if expense_form.is_valid():
-                expense = expense_form.save(commit=False)
-                expense.user = request.user
-                expense.save()
-        elif 'add_income' in request.POST:
-            income_form = IncomeForm(request.POST)
-            if income_form.is_valid():
-                income = income_form.save(commit=False)
-                income.user = request.user
-                income.save()
 
     # .filter(user=request.user) preferred over .all()
     expenses = Expense.objects.all()
@@ -43,11 +31,10 @@ def transactions(request):
     })
 
 
-# Consider making this a separate view
-# Obsolete for now
 def add_transaction(request):
-    expense_form = ExpenseForm()
-    income_form = IncomeForm()
+
+    # Test user, REPLACE WITH request.user ONCE LOGIN IS IMPLEMENTED
+    # user, created = User.objects.get_or_create(username='exampleuser')
 
     if request.method == 'POST':
         if 'add_expense' in request.POST:
@@ -63,12 +50,4 @@ def add_transaction(request):
                 income.user = request.user
                 income.save()
 
-    expenses = Expense.objects.all()
-    incomes = Income.objects.all()
-
-    return render(request, 'transactions.html', {
-        'expense_form': expense_form,
-        'income_form': income_form,
-        'expenses': expenses,
-        'incomes': incomes,
-    })
+    return redirect("transactions")
