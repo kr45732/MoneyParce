@@ -1,3 +1,5 @@
+from models import Budget, Expense
+
 def check_budget_status(user):
     try:
         budget = Budget.objects.get(user=user)
