@@ -34,8 +34,8 @@ def transactions(request):
 def add_transaction(request):
 
     # Test user, DELETE ONCE LOGIN IS IMPLEMENTED!!
-    user, created = User.objects.get_or_create(username='exampleuser')
     if not request.user.is_authenticated:
+        user, created = User.objects.get_or_create(username='exampleuser')
         request.user = user
 
     if request.method == 'POST':
