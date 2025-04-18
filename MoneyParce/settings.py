@@ -39,10 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "home",
-    "income_and_expenses",
+    "transactions",
     "overview",
     "faqs",
     "budget",
+    "MoneyParce"
 ]
 
 MIDDLEWARE = [
