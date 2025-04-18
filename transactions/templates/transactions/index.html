@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+    <header class="masthead bg-index text-white text-center py-4">
+        <div class="container d-flex align-items-center flex-column pt-2">
+            <h1 class="section-title">Income and Expenses</h1>
+        </div>
+    </header>
+    <main>
+        <h2>Expenses</h2>
+        <ul>
+            {% for expense in expenses %}
+                <li>{{ expense.date }} - {{ expense.description }}: ${{ expense.amount }} ({{ expense.category }})</li>
+            {% empty %}
+                <li>No expenses found.</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Incomes</h2>
+        <ul>
+            {% for income in incomes %}
+                <li>{{ income.date }} - {{ income.description }}: ${{ income.amount }}</li>
+            {% empty %}
+                <li>No incomes found.</li>
+            {% endfor %}
+        </ul>
+
+        <div>
+            <h1>Add Transaction</h1>
+            <h2>Add Expense</h2>
+            <form method="post" action="{% url 'transactions.add_transaction' %}">
+                {% csrf_token %}
+                {{ expense_form.as_p }}
+                <button type="submit" name="add_expense">Add Expense</button>
+            </form>
+
+            <h2>Add Income</h2>
+            <form method="post" action="{% url 'transactions.add_transaction' %}">
+                {% csrf_token %}
+                {{ income_form.as_p }}
+                <button type="submit" name="add_income">Add Income</button>
+            </form>
+        </div>
+    </main>
+
+{% endblock content %}
