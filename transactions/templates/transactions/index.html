@@ -9,7 +9,14 @@
         <h2>Expenses</h2>
         <ul>
             {% for expense in expenses %}
-                <li>{{ expense.date }} - {{ expense.description }}: ${{ expense.amount }} ({{ expense.category }})</li>
+                <li style="display: flex; align-items: center; gap: 4px">
+                    <p style="margin: 0">{{ expense.date }} - {{ expense.description }}: ${{ expense.amount }} ({{ expense.category }})</p>
+                     <form method="post" action="{% url 'transactions.remove_transaction' 'expense' expense.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </li>
+
             {% empty %}
                 <li>No expenses found.</li>
             {% endfor %}
@@ -18,7 +25,13 @@
         <h2>Incomes</h2>
         <ul>
             {% for income in incomes %}
-                <li>{{ income.date }} - {{ income.description }}: ${{ income.amount }}</li>
+                <li style="display: flex; align-items: center; gap: 4px">
+                    <p style="margin: 0">{{ income.date }} - {{ income.description }}: ${{ income.amount }}</p>
+                    <form method="post" action="{% url 'transactions.remove_transaction' 'income' income.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </li>
             {% empty %}
                 <li>No incomes found.</li>
             {% endfor %}

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.http import Http404
+from django.shortcuts import render, redirect, get_object_or_404
 
 from MoneyParce.forms import ExpenseForm, IncomeForm
 from MoneyParce.models import Expense, Income
@@ -47,4 +48,21 @@ def add_transaction(request):
                 income.user = request.user
                 income.save()
 
+    return redirect("transactions.index")
+
+def remove_transaction(request, transaction_id, transaction_type):
+    if not request.user.is_authenticated:
+        user, created = User.objects.get_or_create(username='exampleuser')
+        request.user = user
+        # redirect user in production
+        # return redirect("login")
+
+    if transaction_type == 'expense':
+        transaction = get_object_or_404(Expense, id=transaction_id, user=request.user)
+    elif transaction_type == 'income':
+        transaction = get_object_or_404(Income, id=transaction_id, user=request.user)
+    else:
+        raise Http404("Transaction type not found.")
+
+    transaction.delete()
     return redirect("transactions.index")
