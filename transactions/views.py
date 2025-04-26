@@ -142,6 +142,8 @@ def exchange_public_token(request):
 
             access_token = exchange_response.access_token
 
+
+
             # ------------- Use access token to get transactions ----------
 
             start_date: date = (datetime.now() - timedelta(days=30)).date()
