@@ -16,7 +16,6 @@
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </li>
-
             {% empty %}
                 <li>No expenses found.</li>
             {% endfor %}
@@ -54,13 +53,29 @@
             </form>
         </div>
 
-        <button id="link-button" class="btn btn-primary">Link Your Bank</button>
+        <h2>Link Your Bank Account</h2>
+        {% if bank_linked %}
+            <button id="sync-button" class="btn btn-primary">Sync Transactions</button>
+            <button id="unlink-button" class="btn btn-danger">Unlink Bank</button>
+        {% else %}
+            <button id="link-button" class="btn btn-primary">Link Your Bank</button>
+        {% endif %}
 
     </main>
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
     <script>
+        const isBankLinked = {{ bank_linked|yesno:"true,false" }};
+
+        // TODO: if linked:
+
+        // add handler to sync transactions (if server determines its needed, maybe add a toast)
+        // maybe even gray out the button if not needed
+
+        // add handler to unlink bank by removing access token from server
+
+
+
         document.getElementById('link-button').addEventListener('click', async function () {
-            {#const linkToken = "{{ link_token }}"; // Ensure this is passed from the backend#}
 
             const linkToken = (await (await fetch("{% url 'transactions.create_link_token' %}")).json()).link_token;
 

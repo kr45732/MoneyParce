@@ -18,26 +18,38 @@ from plaid.model.transactions_get_request_options import TransactionsGetRequestO
 import env.env
 from MoneyParce.forms import ExpenseForm, IncomeForm
 from MoneyParce.models import Expense, Income
+from accounts.models import CustomUser
 
 
 # Create your views here.
 def index(request):
-    template_data = {}
-    template_data['title'] = 'Transactions'
+
+    # redirect does not work for admins
+    if (not request.user.is_authenticated):
+        return redirect("accounts.login")
+
+    template_data = {
+        'title': 'Transactions',
+    }
 
     expense_form = ExpenseForm()
     income_form = IncomeForm()
 
     # .filter(user=request.user) preferred over .all()
-    expenses = Expense.objects.all()
-    incomes = Income.objects.all()
+    expenses = Expense.objects.filter(user=request.user)
+    incomes = Income.objects.filter(user=request.user)
+
+    custom_user = CustomUser.objects.get(user=request.user)
+    bank_linked = custom_user.plaid_token is not None
+
 
     return render(request, 'transactions/index.html', {
         'expense_form': expense_form,
         'income_form': income_form,
         'expenses': expenses,
         'incomes': incomes,
-        'template_data': template_data
+        'template_data': template_data,
+        'bank_linked': bank_linked,
     })
 
 
@@ -142,7 +154,10 @@ def exchange_public_token(request):
 
             access_token = exchange_response.access_token
 
-
+            # Save the access_token to the user's profile
+            custom_user = CustomUser.objects.get(user=request.user)
+            custom_user.plaid_token = access_token
+            custom_user.save()
 
             # ------------- Use access token to get transactions ----------
 

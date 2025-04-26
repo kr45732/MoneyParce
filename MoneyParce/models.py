@@ -4,11 +4,17 @@ from enum import Enum
 
 expense_categories = [
     ("OTHER", "Other"),
-    ("FOOD", "Food"),
-    ("TRANSPORT", "Transport"),
-    ("ENTERTAINMENT", "Entertainment"),
-    ("UTILITIES", "Utilities"),
-    ("HEALTH", "Health"),
+    ("BANK FEES", "Bank Fees"),
+    ("COMMUNITY", "Community"),
+    ("FOOD AND DRINK", "Food and Drink"),
+    ("HEALTHCARE", "Healthcare"),
+    ("INTEREST", "Interest"),
+    ("PAYMENT", "Payment"),
+    ("RECREATION", "Recreation"),
+    ("SERVICE", "Service"),
+    ("SHOPS", "Shops"),
+    ("TRANSFER", "Transfer"),
+    ("TRAVEL", "Travel"),
 ]
 
 class Budget(models.Model):
