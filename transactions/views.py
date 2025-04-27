@@ -166,11 +166,6 @@ def create_link_token(request):
     api_client = plaid_api.ApiClient(configuration)
     client = plaid_api.PlaidApi(api_client)
 
-    response = client.categories_get({})
-    categories = response.categories
-
-    print(categories)
-
     link_token_request = LinkTokenCreateRequest(
         products=[Products("auth"), Products("transactions")],
         client_name="MoneyParce",
@@ -217,7 +212,7 @@ def exchange_public_token(request):
             custom_user.plaid_token = access_token
             custom_user.save()
 
-            return JsonResponse({'linkStatus': "success" })
+            return redirect("transactions.index")
 
         except PlaidError as e:
             return JsonResponse({'error': str(e)}, status=400)
