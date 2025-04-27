@@ -1,60 +1,91 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+{% extends 'base-test.html' %}
+{% load static %}
 {% block content %}
-    <header class="masthead bg-index text-white text-center py-4">
-        <div class="container d-flex align-items-center flex-column pt-2">
-            <h1 class="section-title">Income and Expenses</h1>
+<body>
+    <div class="section-title">
+        <h2>Income and Expenses</h2>
+    </div>
+
+    <div class="add-transaction-and-link-bank-buttons">
+        <button>Add transaction [To-do]</button>
+        <button>Link to bank [To-do]</button>
+    </div>
+
+    <div class="income-and-expenses-block">
+        <div class="expenses-block">
+            <h2>Expenses</h2>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                </tr>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.description }}</td>
+                    <td>${{ expense.amount }}</td>
+                    <td>{{ expense.category }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No expenses found</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <div class="add-expense-block">
+                <h2>Add Expense</h2>
+                <form method="post" action="{% url 'transactions.add_transaction' %}">
+                    {% csrf_token %}
+                    {{ expense_form.as_p }}
+                    <button type="submit" name="add_expense">Add Expense</button>
+                </form> 
+            </div>
         </div>
-    </header>
-    <main>
-        <h2>Expenses</h2>
-        <ul>
-            {% for expense in expenses %}
-                <li style="display: flex; align-items: center; gap: 4px">
-                    <p style="margin: 0">{{ expense.date }} - {{ expense.description }}: ${{ expense.amount }} ({{ expense.category }})</p>
-                     <form method="post" action="{% url 'transactions.remove_transaction' 'expense' expense.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </li>
+        
+        <div class="income-block">
+            <h2>Incomes</h2>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+                {% for income in incomes %}
+                <tr>
+                    <td>{{ income.date }}</td>
+                    <td>{{ income.description }}</td>
+                    <td>${{ income.amount }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No incomes found</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </table>
 
-            {% empty %}
-                <li>No expenses found.</li>
-            {% endfor %}
-        </ul>
-
-        <h2>Incomes</h2>
-        <ul>
-            {% for income in incomes %}
-                <li style="display: flex; align-items: center; gap: 4px">
-                    <p style="margin: 0">{{ income.date }} - {{ income.description }}: ${{ income.amount }}</p>
-                    <form method="post" action="{% url 'transactions.remove_transaction' 'income' income.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </li>
-            {% empty %}
-                <li>No incomes found.</li>
-            {% endfor %}
-        </ul>
-
-        <div>
-            <h1>Add Transaction</h1>
-            <h2>Add Expense</h2>
-            <form method="post" action="{% url 'transactions.add_transaction' %}">
-                {% csrf_token %}
-                {{ expense_form.as_p }}
-                <button type="submit" name="add_expense">Add Expense</button>
-            </form>
-
-            <h2>Add Income</h2>
-            <form method="post" action="{% url 'transactions.add_transaction' %}">
-                {% csrf_token %}
-                {{ income_form.as_p }}
-                <button type="submit" name="add_income">Add Income</button>
-            </form>
+            <div class="add-income-block">
+                <h2>Add Income</h2>
+                <form method="post" action="{% url 'transactions.add_transaction' %}">
+                    {% csrf_token %}
+                    {{ income_form.as_p }}
+                    <button type="submit" name="add_income">Add Income</button>
+                </form>
+            </div>
         </div>
 
-        <button id="link-button" class="btn btn-primary">Link Your Bank</button>
+    </div>
+
+    <!--
+    <button id="link-button" class="btn btn-primary">Link Your Bank</button>
 
     </main>
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
@@ -103,7 +134,7 @@
 
         });
     </script>
+-->
+</body>
 {% endblock content %}
-
-
-
+</html>
