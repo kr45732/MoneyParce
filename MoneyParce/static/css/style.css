@@ -1,5 +1,4 @@
 .bg-index {
-    /*background: url("/static/img/background.jpg") no-repeat fixed;*/
     background-color: white;
     background-size: 100% auto;
     margin-left: 10%;
@@ -48,10 +47,6 @@
 }
 
 
-.logo-text {
-    color: white;
-}
-
 .container {
     color: white;
     flex: auto;
@@ -78,4 +73,10 @@
     border-style: solid;
     border: #202020;
     border-radius: 2px;
+}
+
+.p-3.navbar.navbar-dark.bg-dark.navbar-expand-lg {
+    color: #6ab43e;
+    background-color: #6ab43e !important;
+    align-items: stretch;
 }
