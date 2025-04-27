@@ -103,7 +103,7 @@ body {
     color: black;
 }
 
-.footer-hline {
+.black-hline {
     color: black;
     border-color: black;
 }
@@ -131,7 +131,18 @@ body {
     margin: 10px;
 }
 
-table {
+.add-expense-block {
+    text-align: left;
+    flex-grow: 1;
+}
+
+.add-income-block {
+    text-align: left;
+    flex-grow: 1;
+}
+
+table, tr, th, td {
     text-align: left;
     border: 1px solid black;
+    border-collapse: collapse;
 }

@@ -5,13 +5,17 @@
 {% block content %}
 <body>
     <div class="section-title">
-        <h2>Income and Expenses</h1>
+        <h2>Income and Expenses</h2>
+    </div>
+
+    <div class="add-transaction-and-link-bank-buttons">
+        <button>Add transaction [To-do]</button>
+        <button>Link to bank [To-do]</button>
     </div>
 
     <div class="income-and-expenses-block">
         <div class="expenses-block">
             <h2>Expenses</h2>
-            {% if not empty %}
             <table>
                 <tr>
                     <th>Date</th>
@@ -26,18 +30,27 @@
                     <td>${{ expense.amount }}</td>
                     <td>{{ expense.category }}</td>
                 </tr>
+                {% empty %}
+                <tr>
+                    <td>No expenses found</td>
+                    <td></td>
+                    <td></td>
+                </tr>
                 {% endfor %}
             </table>
-            {% endif %}
 
-            {% if empty %}
-            <p>No expenses found.</p>
-            {% endif %}
+            <div class="add-expense-block">
+                <h2>Add Expense</h2>
+                <form method="post" action="{% url 'transactions.add_transaction' %}">
+                    {% csrf_token %}
+                    {{ expense_form.as_p }}
+                    <button type="submit" name="add_expense">Add Expense</button>
+                </form> 
+            </div>
         </div>
         
         <div class="income-block">
             <h2>Incomes</h2>
-            {% if not empty %}
             <table>
                 <tr>
                     <th>Date</th>
@@ -50,29 +63,29 @@
                     <td>{{ income.description }}</td>
                     <td>${{ income.amount }}</td>
                 </tr>
+                {% empty %}
+                <tr>
+                    <td>No incomes found</td>
+                    <td></td>
+                    <td></td>
+                </tr>
                 {% endfor %}
             </table>
-            {% endif %}
 
-            {% if empty %}
-            <p>No expenses found.</p>
-            {% endif %}
-
-
-            <!--
-            <ul>
-                {% for income in incomes %}
-                    <li>{{ income.date }} - {{ income.description }}: ${{ income.amount }}</li>
-                {% empty %}
-                    <li>No incomes found.</li>
-                {% endfor %}
-            </ul>
-        -->
+            <div class="add-income-block">
+                <h2>Add Income</h2>
+                <form method="post" action="{% url 'transactions.add_transaction' %}">
+                    {% csrf_token %}
+                    {{ income_form.as_p }}
+                    <button type="submit" name="add_income">Add Income</button>
+                </form>
+            </div>
         </div>
+
     </div>
-    
+
+    <!--
         <div>
-            <h1>Add Transaction</h1>
             <h2>Add Expense</h2>
             <form method="post" action="{% url 'transactions.add_transaction' %}">
                 {% csrf_token %}
@@ -80,6 +93,7 @@
                 <button type="submit" name="add_expense">Add Expense</button>
             </form>
     
+        <div>
             <h2>Add Income</h2>
             <form method="post" action="{% url 'transactions.add_transaction' %}">
                 {% csrf_token %}
@@ -87,6 +101,7 @@
                 <button type="submit" name="add_income">Add Income</button>
             </form>
         </div>
+    -->
 </body>
 {% endblock content %}
 </html>
