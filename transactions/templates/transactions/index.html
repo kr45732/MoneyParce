@@ -53,6 +53,57 @@
                 <button type="submit" name="add_income">Add Income</button>
             </form>
         </div>
-    </main>
 
+        <button id="link-button" class="btn btn-primary">Link Your Bank</button>
+
+    </main>
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+    <script>
+        document.getElementById('link-button').addEventListener('click', async function () {
+            {#const linkToken = "{{ link_token }}"; // Ensure this is passed from the backend#}
+
+            const linkToken = (await (await fetch("{% url 'transactions.create_link_token' %}")).json()).link_token;
+
+            const handler = Plaid.create({
+                token: linkToken,
+                onSuccess: function (public_token, metadata) {
+                    // Send the public_token to your server
+                    fetch("{% url 'transactions.exchange_public_token' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ public_token: public_token })
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        else {
+                            console.log('Public token exchanged successfully');
+                            response.json().then(data => {
+                                console.log('Data:', data);
+                            });
+                        }
+
+                    });
+                },
+                onExit: function (err, metadata) {
+                    if (err != null) {
+                        console.error('Error:', err);
+                    }
+                },
+                onEvent: function (eventName, metadata) {
+                    // console.log('Event:', eventName, metadata);
+                }
+            });
+
+            handler.open();
+
+
+        });
+    </script>
 {% endblock content %}
+
+
+
