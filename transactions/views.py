@@ -93,6 +93,64 @@ def remove_transaction(request, transaction_id, transaction_type):
     transaction.delete()
     return redirect("transactions.index")
 
+def sync_transactions(request):
+    try:
+        configuration = Configuration(
+            host=env.env.PLAID_ENV,
+            api_key={
+                'clientId': env.env.PLAID_CLIENT_ID,
+                'secret': env.env.PLAID_SECRET,
+            }
+        )
+        api_client = plaid_api.ApiClient(configuration)
+        client = plaid_api.PlaidApi(api_client)
+
+        custom_user = CustomUser.objects.get(user=request.user)
+        access_token = custom_user.plaid_token
+
+        start_date: date = (datetime.now() - timedelta(days=30)).date()
+        end_date: date = datetime.now().date()
+
+        # Create the request
+        transaction_request = TransactionsGetRequest(
+            access_token=access_token,
+            start_date=start_date,
+            end_date=end_date,
+            options=TransactionsGetRequestOptions(
+                count=100,  # Number of transactions to fetch
+                offset=0  # Offset for pagination
+            )
+        )
+
+        response = client.transactions_get(transaction_request)
+        transactions = response.transactions
+
+        refresh = False
+        for t in transactions:
+            # Check if the transaction already exists
+            if not Expense.objects.filter(transaction_id=t.transaction_id, user=request.user).exists():
+                refresh = True
+                # Create a new Expense object
+                expense = Expense(
+                    user=request.user,
+                    amount=t.amount,
+                    description=t.name,
+                    date=t.authorized_date,
+                    category=t.category[0] if t.category else 'Other',
+                    transaction_id=t.transaction_id
+                )
+                expense.save()
+
+        if refresh:
+            return redirect("transactions.index")
+
+        return JsonResponse({'status': 'nothing new to sync'}, status=204)
+
+    except PlaidError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': 'An unexpected error occurred: ' + str(e)}, status=500)
+
 def create_link_token(request):
     # TODO: enforce get request method?
     client_user_id = str(request.user.id)  # Ensure client_user_id is a string
@@ -159,26 +217,7 @@ def exchange_public_token(request):
             custom_user.plaid_token = access_token
             custom_user.save()
 
-            # ------------- Use access token to get transactions ----------
-
-            start_date: date = (datetime.now() - timedelta(days=30)).date()
-            end_date: date = datetime.now().date()
-
-            # Create the request
-            request = TransactionsGetRequest(
-                access_token=access_token,
-                start_date= start_date,
-                end_date=end_date,
-                options=TransactionsGetRequestOptions(
-                    count=100,  # Number of transactions to fetch
-                    offset=0    # Offset for pagination
-                )
-            )
-
-            response = client.transactions_get(request)
-            transactions = response.transactions
-
-            return JsonResponse({'transactions': [t.to_dict() for t in transactions]})
+            return JsonResponse({'linkStatus': "success" })
 
         except PlaidError as e:
             return JsonResponse({'error': str(e)}, status=400)

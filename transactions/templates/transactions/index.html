@@ -56,7 +56,6 @@
         <h2>Link Your Bank Account</h2>
         {% if bank_linked %}
             <button id="sync-button" class="btn btn-primary">Sync Transactions</button>
-            <button id="unlink-button" class="btn btn-danger">Unlink Bank</button>
         {% else %}
             <button id="link-button" class="btn btn-primary">Link Your Bank</button>
         {% endif %}
@@ -71,52 +70,71 @@
         // add handler to sync transactions (if server determines its needed, maybe add a toast)
         // maybe even gray out the button if not needed
 
-        // add handler to unlink bank by removing access token from server
+        if (isBankLinked) {
+            document.getElementById('sync-button').addEventListener('click', async function () {
+                const response = await fetch("{% url 'transactions.sync_transactions' %}", {
+                    redirect: 'follow',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    {#body: JSON.stringify({ date: "2025-04-30" })#}
 
+                });
 
-
-        document.getElementById('link-button').addEventListener('click', async function () {
-
-            const linkToken = (await (await fetch("{% url 'transactions.create_link_token' %}")).json()).link_token;
-
-            const handler = Plaid.create({
-                token: linkToken,
-                onSuccess: function (public_token, metadata) {
-                    // Send the public_token to your server
-                    fetch("{% url 'transactions.exchange_public_token' %}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({ public_token: public_token })
-                    }).then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        else {
-                            console.log('Public token exchanged successfully');
-                            response.json().then(data => {
-                                console.log('Data:', data);
-                            });
-                        }
-
-                    });
-                },
-                onExit: function (err, metadata) {
-                    if (err != null) {
-                        console.error('Error:', err);
-                    }
-                },
-                onEvent: function (eventName, metadata) {
-                    // console.log('Event:', eventName, metadata);
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    alert("No new transactions to sync");
+                } else {
+                    console.error('Failed to sync transactions');
                 }
             });
+        }
+        else {
+            document.getElementById('link-button').addEventListener('click', async function () {
 
-            handler.open();
+                const linkToken = (await (await fetch("{% url 'transactions.create_link_token' %}")).json()).link_token;
+
+                const handler = Plaid.create({
+                    token: linkToken,
+                    onSuccess: function (public_token, metadata) {
+                        // Send the public_token to your server
+                        fetch("{% url 'transactions.exchange_public_token' %}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({ public_token: public_token })
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            else {
+                                console.log('Public token exchanged successfully');
+                                response.json().then(data => {
+                                    console.log('Data:', data);
+                                });
+                            }
+
+                        });
+                    },
+                    onExit: function (err, metadata) {
+                        if (err != null) {
+                            console.error('Error:', err);
+                        }
+                    },
+                    onEvent: function (eventName, metadata) {
+                        // console.log('Event:', eventName, metadata);
+                    }
+                });
+
+                handler.open();
+            });
+        }
 
 
-        });
     </script>
 {% endblock content %}
 
