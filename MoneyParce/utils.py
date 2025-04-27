@@ -1,4 +1,4 @@
-from models import Budget, Expense
+from MoneyParce.models import Budget, Expense
 
 def check_budget_status(user):
     try:

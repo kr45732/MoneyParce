@@ -1,12 +1,51 @@
-<!DOCTYPE html>
-<html>
-{% extends 'base-test.html' %}
-{% load static %}
+{% extends 'base.html' %}
+
 {% block content %}
-<body>
-    <div class="section-title">
-        <h2>Budgets</h2>
-    </div>
-</body>
-{% endblock content %}
-</html>
+<div class="container mt-5">
+    <h1 class="mb-4">My Budgets</h1>
+
+    <h2>Your Budgets</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Limit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in user_budgets %}
+                <tr>
+                    <td>{{ b.category }}</td>
+                    <td>${{ b.limit }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">You have no budgets yet.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>Create or Update a Budget</h2>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="limit" class="form-label">Limit:</label>
+            <input type="number" id="limit" name="limit" class="form-control" step="0.01" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Category:</label>
+            <select id="category" name="category" class="form-select" required>
+                {% for cat, label in category_choices %}
+                    <option value="{{ cat }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock %}
