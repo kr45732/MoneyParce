@@ -1,7 +1,7 @@
+from django.contrib.auth.decorators import login_required
 import json
 from datetime import datetime, timedelta, date
 
-from django.contrib.auth.models import User
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from plaid import Configuration
@@ -20,17 +20,16 @@ from MoneyParce.forms import ExpenseForm, IncomeForm
 from MoneyParce.models import Expense, Income
 
 
-# Create your views here.
+@login_required
+
 def index(request):
-    template_data = {}
-    template_data['title'] = 'Transactions'
+    template_data = {'title': 'Transactions'}
 
     expense_form = ExpenseForm()
     income_form = IncomeForm()
 
-    # .filter(user=request.user) preferred over .all()
-    expenses = Expense.objects.all()
-    incomes = Income.objects.all()
+    expenses = Expense.objects.filter(user=request.user)
+    incomes = Income.objects.filter(user=request.user)
 
     return render(request, 'transactions/index.html', {
         'expense_form': expense_form,
@@ -40,14 +39,8 @@ def index(request):
         'template_data': template_data
     })
 
-
+@login_required
 def add_transaction(request):
-
-    # Test user, DELETE ONCE LOGIN IS IMPLEMENTED!!
-    if not request.user.is_authenticated:
-        user, created = User.objects.get_or_create(username='exampleuser')
-        request.user = user
-
     if request.method == 'POST':
         if 'add_expense' in request.POST:
             expense_form = ExpenseForm(request.POST)
@@ -64,13 +57,8 @@ def add_transaction(request):
 
     return redirect("transactions.index")
 
+@login_required
 def remove_transaction(request, transaction_id, transaction_type):
-    if not request.user.is_authenticated:
-        user, created = User.objects.get_or_create(username='exampleuser')
-        request.user = user
-        # redirect user in production
-        # return redirect("login")
-
     if transaction_type == 'expense':
         transaction = get_object_or_404(Expense, id=transaction_id, user=request.user)
     elif transaction_type == 'income':
