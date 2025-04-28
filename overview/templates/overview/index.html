@@ -48,7 +48,7 @@
 
     <header class="masthead bg-index text-white text-center py-4">
     </header>
-    <div class="p-3 ">
+    <div class="p-3">
         <div class="container text-black text-center">
             <form method="get" class="controls">
               <label>Date Range:
@@ -69,13 +69,15 @@
             </form>
 
             <div class="charts d-flex justify-content-center">
-
-                <div id="linechart_expense" class="chart"></div>
+                {% if not empty_expense %}
+                    <div id="linechart_expense" class="chart"></div>
+                {%  endif %}
+                {% if not empty_income %}
                 <div id="linechart_income" class="chart"></div>
+                {%  endif %}
                 <div id="piechart" class="chart"></div>
 
             </div>
         </div>
-</body>
 {% endblock content %}
 </html>

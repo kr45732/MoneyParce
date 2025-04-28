@@ -83,6 +83,8 @@ def index(request):
         "line_chart_data_income": line_chart_data_income,
         "date_filter": date_filter,
         "group_by": group_by,
+        "empty_expense": len(line_chart_data_expenses) ==  1,
+        "empty_income": len(line_chart_data_income) ==  1
     }
 
     return render(request, 'overview/index.html', context)

@@ -12,7 +12,7 @@ expense_categories = [
 ]
 
 class Budget(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     limit = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(
         max_length=50,
@@ -35,7 +35,7 @@ class Expense(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.username} - {self.description}: -${self.amount}"
+        return f"{self.user.username}'s Budget for {self.category}: ${self.limit}"
 
 
 class Income(models.Model):
