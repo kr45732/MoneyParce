@@ -57,13 +57,9 @@
         <div class="form-group mt-2">
             <label>Category:</label>
             <select name="category" class="form-control" required>
-                <option value="FOOD">Food</option>
-                <option value="TRANSPORT">Transport</option>
-                <option value="ENTERTAINMENT">Entertainment</option>
-                <option value="UTILITIES">Utilities</option>
-                <option value="HEALTH">Health</option>
-                <option value="OTHER">Other</option>
-                <option value="ALL">All</option>
+                {% for code, name in categories %}
+                    <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
             </select>
         </div>
         <button type="submit" class="btn btn-primary mt-3">Add/Update Budget</button>

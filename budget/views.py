@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from MoneyParce.models import Expense, Budget
+from MoneyParce.models import Expense, Budget, expense_categories
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from decimal import Decimal
@@ -63,6 +63,7 @@ def index(request):
     return render(request, 'budget/index.html', {
         'budgets': budgets,
         'template_data': template_data,
+        'categories': expense_categories + [("ALL", "All")],
     })
 
 @login_required
