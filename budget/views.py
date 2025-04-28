@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from MoneyParce.models import Expense, Budget
-from MoneyParce.utils import check_budget_status
-from django.contrib.auth.models import User
+#from MoneyParce.utils import check_budget_status
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 
@@ -11,7 +10,6 @@ def index(request):
 
     budgets = Budget.objects.filter(user=request.user)
 
-    # For each budget, calculate amount spent and percent used
     for budget in budgets:
         if budget.category == "ALL":
             expenses = Expense.objects.filter(user=request.user)
@@ -24,21 +22,19 @@ def index(request):
         else:
             budget.percent_used = 0
 
-        budget.amount_spent = total_spent  # Optional: if you want to show dollars spent too
+        budget.amount_spent = total_spent
 
     if request.method == 'POST':
         limit = request.POST.get('limit')
         category = request.POST.get('category')
 
         if limit and category:
-            # Try to find an existing budget for this user and category
             budget, created = Budget.objects.get_or_create(
                 user=request.user,
                 category=category,
                 defaults={'limit': limit}
             )
             if not created:
-                # If the budget already existed, update the limit
                 budget.limit = limit
                 budget.save()
 

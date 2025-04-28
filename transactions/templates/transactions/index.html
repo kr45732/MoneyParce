@@ -1,140 +1,165 @@
 <!DOCTYPE html>
-<html>
+
 {% extends 'base-test.html' %}
 {% load static %}
 {% block content %}
-<body>
-    <div class="section-title">
-        <h2>Income and Expenses</h2>
-    </div>
 
-    <div class="add-transaction-and-link-bank-buttons">
-        <button>Add transaction [To-do]</button>
-        <button>Link to bank [To-do]</button>
-    </div>
+<div class="section-title">
+    <h2>Income and Expenses</h2>
+</div>
 
-    <div class="income-and-expenses-block">
-        <div class="expenses-block">
-            <h2>Expenses</h2>
-            <table>
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                    <th>Category</th>
-                </tr>
-                {% for expense in expenses %}
-                <tr>
-                    <td>{{ expense.date }}</td>
-                    <td>{{ expense.description }}</td>
-                    <td>${{ expense.amount }}</td>
-                    <td>{{ expense.category }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td>No expenses found</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                {% endfor %}
-            </table>
+<div class="add-transaction-and-link-bank-buttons">
+    <button>Add transaction [To-do]</button>
+    <button>Link to bank [To-do]</button>
+</div>
 
-            <div class="add-expense-block">
-                <h2>Add Expense</h2>
-                <form method="post" action="{% url 'transactions.add_transaction' %}">
-                    {% csrf_token %}
-                    {{ expense_form.as_p }}
-                    <button type="submit" name="add_expense">Add Expense</button>
-                </form> 
-            </div>
+<div class="income-and-expenses-block">
+    <div class="expenses-block">
+        <h2>Expenses</h2>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Category</th>
+            </tr>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.date }}</td>
+                <td>{{ expense.description }}</td>
+                <td>${{ expense.amount }}</td>
+                <td>{{ expense.category }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td>No expenses found</td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="add-expense-block">
+            <h2>Add Expense</h2>
+            <form method="post" action="{% url 'transactions.add_transaction' %}">
+                {% csrf_token %}
+                {{ expense_form.as_p }}
+                <button type="submit" name="add_expense">Add Expense</button>
+            </form>
         </div>
-        
-        <div class="income-block">
-            <h2>Incomes</h2>
-            <table>
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                </tr>
-                {% for income in incomes %}
-                <tr>
-                    <td>{{ income.date }}</td>
-                    <td>{{ income.description }}</td>
-                    <td>${{ income.amount }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td>No incomes found</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                {% endfor %}
-            </table>
-
-            <div class="add-income-block">
-                <h2>Add Income</h2>
-                <form method="post" action="{% url 'transactions.add_transaction' %}">
-                    {% csrf_token %}
-                    {{ income_form.as_p }}
-                    <button type="submit" name="add_income">Add Income</button>
-                </form>
-            </div>
-        </div>
-
     </div>
 
-    <!--
-    <button id="link-button" class="btn btn-primary">Link Your Bank</button>
+    <div class="income-block">
+        <h2>Incomes</h2>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Amount</th>
+            </tr>
+            {% for income in incomes %}
+            <tr>
+                <td>{{ income.date }}</td>
+                <td>{{ income.description }}</td>
+                <td>${{ income.amount }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td>No incomes found</td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </table>
 
-    </main>
-    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-    <script>
-        document.getElementById('link-button').addEventListener('click', async function () {
-            {#const linkToken = "{{ link_token }}"; // Ensure this is passed from the backend#}
+        <div class="add-income-block">
+            <h2>Add Income</h2>
+            <form method="post" action="{% url 'transactions.add_transaction' %}">
+                {% csrf_token %}
+                {{ income_form.as_p }}
+                <button type="submit" name="add_income">Add Income</button>
+            </form>
+        </div>
+    </div>
 
-            const linkToken = (await (await fetch("{% url 'transactions.create_link_token' %}")).json()).link_token;
+</div>
 
-            const handler = Plaid.create({
-                token: linkToken,
-                onSuccess: function (public_token, metadata) {
-                    // Send the public_token to your server
-                    fetch("{% url 'transactions.exchange_public_token' %}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({ public_token: public_token })
-                    }).then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        else {
-                            console.log('Public token exchanged successfully');
-                            response.json().then(data => {
-                                console.log('Data:', data);
-                            });
-                        }
+<!--
+<button id="link-button" class="btn btn-primary">Link Your Bank</button>
 
-                    });
-                },
-                onExit: function (err, metadata) {
-                    if (err != null) {
-                        console.error('Error:', err);
+</main>
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+    document.getElementById('link-button').addEventListener('click', async function () {
+        {#const linkToken = "{{ link_token }}"; // Ensure this is passed from the backend#}
+
+        const linkToken = (await (await fetch("{% url 'transactions.create_link_token' %}")).json()).link_token;
+
+        const handler = Plaid.create({
+            token: linkToken,
+            onSuccess: function (public_token, metadata) {
+                // Send the public_token to your server
+                fetch("{% url 'transactions.exchange_public_token' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ public_token: public_token })
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
-                },
-                onEvent: function (eventName, metadata) {
-                    // console.log('Event:', eventName, metadata);
+                    else {
+                        console.log('Public token exchanged successfully');
+                        response.json().then(data => {
+                            console.log('Data:', data);
+                        });
+                    }
+
+                });
+            },
+            onExit: function (err, metadata) {
+                if (err != null) {
+                    console.error('Error:', err);
                 }
-            });
-
-            handler.open();
-
-
+            },
+            onEvent: function (eventName, metadata) {
+                // console.log('Event:', eventName, metadata);
+            }
         });
-    </script>
+
+        handler.open();
+
+
+    });
+</script>
 -->
-</body>
+{% if messages %}
+<div class="modal fade" id="budgetWarningModal" tabindex="-1" aria-labelledby="budgetWarningModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title" id="budgetWarningModalLabel">Budget Warning</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var warningModal = new bootstrap.Modal(document.getElementById('budgetWarningModal'));
+    warningModal.show();
+});
+</script>
+{% endif %}
 {% endblock content %}
-</html>
