@@ -29,8 +29,12 @@ body {
     flex-direction: row;
     justify-content: space-evenly;
     border-top: 1px solid black;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid black !important;
     color: black;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    height: 75.733px;
+    padding-bottom: 0px !important;
 }
 
 .page-footer {
@@ -87,6 +91,8 @@ body {
     margin: 0px;
     align-self: center;
     text-decoration: none;
+    font-size: large;
+    color: black !important;
 }
 
 .section-title {
@@ -134,11 +140,15 @@ body {
 .add-expense-block {
     text-align: left;
     flex-grow: 1;
+    width: 50%;
+    margin: 10px;
 }
 
 .add-income-block {
     text-align: left;
     flex-grow: 1;
+    margin: 10px;
+    width: 50%;
 }
 
 table, tr, th, td {
@@ -146,3 +156,26 @@ table, tr, th, td {
     border: 1px solid black;
     border-collapse: collapse;
 }
+
+.add-transaction-block {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+    justify-content: space-evenly;
+}
+
+.add-transaction-and-link-bank-buttons {
+    margin: 10px;
+}
+
+.charts {
+    border: 1px solid black;
+    background-color: #9AC2FA;
+}
+
+
+.chart {
+    border: 1px solid black;
+    margin: 20px;
+}
+

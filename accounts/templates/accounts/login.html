@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base-test.html' %}
 {% block content %}
     <div class="p-3 mt-4">
         <div class="container">
@@ -34,6 +34,9 @@
 
                                     <button type="submit" class="btn bg-dark text-white">
                                         Login
+                                    </button>
+                                    <button type="submit" class="btn bg-dark text-white">
+                                        <a class="nav-link"href="{% url 'accounts.signup' %}">Sign Up</a>
                                     </button>
                                 </div>
                             </form>

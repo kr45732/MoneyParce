@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base-test.html' %}
 {% block content %}
     <div class="p-3 mt-4">
         <div class="container">
@@ -22,6 +22,9 @@
                                 {{ template_data.form.as_p }}
                                 <button type="submit" class="btn bg-dark text-white">
                                     Reset Password
+                                </button>
+                                <button class="btn bg-dark text-white">
+                                    <a class="nav-link"href="{% url 'accounts.login' %}">Log in</a>
                                 </button>
                             </form>
                         </div>

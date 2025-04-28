@@ -8,104 +8,98 @@
     <h2>Income and Expenses</h2>
 </div>
 
-<div class="add-transaction-and-link-bank-buttons">
-    <button>Add transaction [To-do]</button>
-    <button>Link to bank [To-do]</button>
-</div>
+    <div class="add-transaction-and-link-bank-buttons">
+        <button id="link-button" class="btn btn-dark">Link bank</button>
+    </div>
 
-<div class="income-and-expenses-block">
-    <div class="expenses-block">
-        <h2>Expenses</h2>
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Category</th>
-                <th>Action</th>
-            </tr>
-            {% for expense in expenses %}
-            <tr>
-                <td>{{ expense.date }}</td>
-                <td>{{ expense.description }}</td>
-                <td>${{ expense.amount }}</td>
-                <td>{{ expense.category }}</td>
-                <td>
-                    <form method="post" action="{% url 'transactions.remove_transaction' 'expense' expense.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td>No expenses found</td>
-                <td></td>
-                <td></td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="income-and-expenses-block">
+        <div class="expenses-block">
+            <h2>Expenses</h2>
+            <table class="table table-hover table-striped">
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                </tr>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.description }}</td>
+                    <td>${{ expense.amount }}</td>
+                    <td>{{ expense.category }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No expenses found</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+        <div class="income-block">
+            <h2>Incomes</h2>
+            <table class="table table-hover table-striped">
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+                {% for income in incomes %}
+                <tr>
+                    <td>{{ income.date }}</td>
+                    <td>{{ income.description }}</td>
+                    <td>${{ income.amount }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No incomes found</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 
+    <div class="add-transaction-block">
         <div class="add-expense-block">
             <h2>Add Expense</h2>
             <form method="post" action="{% url 'transactions.add_transaction' %}">
                 {% csrf_token %}
                 {{ expense_form.as_p }}
-                <button type="submit" name="add_expense">Add Expense</button>
-            </form>
+                <button class="btn btn-primary" type="submit" name="add_expense">Add Expense</button>
+            </form> 
         </div>
-    </div>
-
-    <div class="income-block">
-        <h2>Incomes</h2>
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Action</th>
-            </tr>
-            {% for income in incomes %}
-            <tr>
-                <td>{{ income.date }}</td>
-                <td>{{ income.description }}</td>
-                <td>${{ income.amount }}</td>
-                <td>
-                    <form method="post" action="{% url 'transactions.remove_transaction' 'income' income.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td>No incomes found</td>
-                <td></td>
-                <td></td>
-            </tr>
-            {% endfor %}
-        </table>
-
         <div class="add-income-block">
             <h2>Add Income</h2>
             <form method="post" action="{% url 'transactions.add_transaction' %}">
                 {% csrf_token %}
                 {{ income_form.as_p }}
-                <button type="submit" name="add_income">Add Income</button>
+                <button class="btn btn-primary" type="submit" name="add_income">Add Income</button>
             </form>
         </div>
     </div>
+    <!--
+    <form>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Amount</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter amount">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Description</label>
+          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Description">
+        </div>
+        <button type="submit" class="btn btn-primary" name="add_expense">Add Expense</button>
+      </form>
+    -->
 
-</div>
-
-<!--
-<button id="link-button" class="btn btn-primary">Link Your Bank</button>
-
-</main>
-<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-<script>
-    document.getElementById('link-button').addEventListener('click', async function () {
-        {#const linkToken = "{{ link_token }}"; // Ensure this is passed from the backend#}
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+    <script>
+        document.getElementById('link-button').addEventListener('click', async function () {
+            {#const linkToken = "{{ link_token }}"; // Ensure this is passed from the backend#}
 
         const linkToken = (await (await fetch("{% url 'transactions.create_link_token' %}")).json()).link_token;
 
@@ -148,7 +142,6 @@
 
     });
 </script>
--->
 {% if messages %}
 <div class="modal fade" id="budgetWarningModal" tabindex="-1" aria-labelledby="budgetWarningModalLabel" aria-hidden="true">
   <div class="modal-dialog">
