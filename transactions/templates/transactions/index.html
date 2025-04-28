@@ -9,7 +9,12 @@
 </div>
 
     <div class="add-transaction-and-link-bank-buttons">
-        <button id="link-button" class="btn btn-dark">Link bank</button>
+        {% if bank_linked %}
+            <button id="sync-button" class="btn btn-dark">Sync Transactions</button>
+
+        {% else %}
+            <button id="link-button" class="btn btn-dark">Link bank</button>
+        {% endif %}
     </div>
 
     <div class="income-and-expenses-block">
@@ -38,7 +43,7 @@
                 {% endfor %}
             </table>
         </div>
-        
+
         <div class="income-block">
             <h2>Incomes</h2>
             <table class="table table-hover table-striped">
@@ -71,7 +76,7 @@
                 {% csrf_token %}
                 {{ expense_form.as_p }}
                 <button class="btn btn-primary" type="submit" name="add_expense">Add Expense</button>
-            </form> 
+            </form>
         </div>
         <div class="add-income-block">
             <h2>Add Income</h2>
@@ -98,75 +103,106 @@
 
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
     <script>
-        document.getElementById('link-button').addEventListener('click', async function () {
-            {#const linkToken = "{{ link_token }}"; // Ensure this is passed from the backend#}
+        const isBankLinked = {{ bank_linked|yesno:"true,false" }};
 
-        const linkToken = (await (await fetch("{% url 'transactions.create_link_token' %}")).json()).link_token;
+        // TODO: if linked:
 
-        const handler = Plaid.create({
-            token: linkToken,
-            onSuccess: function (public_token, metadata) {
-                // Send the public_token to your server
-                fetch("{% url 'transactions.exchange_public_token' %}", {
-                    method: 'POST',
+        // add handler to sync transactions (if server determines its needed, maybe add a toast)
+        // maybe even gray out the button if not needed
+
+        if (isBankLinked) {
+            document.getElementById('sync-button').addEventListener('click', async function () {
+                const response = await fetch("{% url 'transactions.sync_transactions' %}", {
+                    redirect: 'follow',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': '{{ csrf_token }}'
                     },
-                    body: JSON.stringify({ public_token: public_token })
-                }).then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    else {
-                        console.log('Public token exchanged successfully');
-                        response.json().then(data => {
-                            console.log('Data:', data);
-                        });
-                    }
+                    {#body: JSON.stringify({ date: "2025-04-30" })#}
 
                 });
-            },
-            onExit: function (err, metadata) {
-                if (err != null) {
-                    console.error('Error:', err);
+
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    alert("No new transactions to sync");
+                } else {
+                    console.error('Failed to sync transactions');
                 }
-            },
-            onEvent: function (eventName, metadata) {
-                // console.log('Event:', eventName, metadata);
-            }
-        });
+            });
+        }
+        else {
+            document.getElementById('link-button').addEventListener('click', async function () {
 
-        handler.open();
+                const linkToken = (await (await fetch("{% url 'transactions.create_link_token' %}")).json()).link_token;
+
+                const handler = Plaid.create({
+                    token: linkToken,
+                    onSuccess: function (public_token, metadata) {
+                        // Send the public_token to your server
+                        fetch("{% url 'transactions.exchange_public_token' %}", {
+                            method: 'POST',
+                            redirect: 'follow',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({ public_token: public_token })
+                        }).then(response => {
+
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+
+                        });
+                    },
+                    onExit: function (err, metadata) {
+                        if (err != null) {
+                            console.error('Error:', err);
+                        }
+                    },
+                    onEvent: function (eventName, metadata) {
+                        // console.log('Event:', eventName, metadata);
+                    }
+                });
+
+                handler.open();
+            });
+        }
 
 
-    });
-</script>
+    </script>
+
 {% if messages %}
-<div class="modal fade" id="budgetWarningModal" tabindex="-1" aria-labelledby="budgetWarningModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-warning">
-        <h5 class="modal-title" id="budgetWarningModalLabel">Budget Warning</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        {% for message in messages %}
-          <p>{{ message }}</p>
-        {% endfor %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+    <div class="modal fade" id="budgetWarningModal" tabindex="-1" aria-labelledby="budgetWarningModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-warning">
+            <h5 class="modal-title" id="budgetWarningModalLabel">Budget Warning</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var warningModal = new bootstrap.Modal(document.getElementById('budgetWarningModal'));
-    warningModal.show();
-});
-</script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var warningModal = new bootstrap.Modal(document.getElementById('budgetWarningModal'));
+        warningModal.show();
+    });
+    </script>
 {% endif %}
 {% endblock content %}
+
+
+

@@ -7,3 +7,4 @@ class CustomUser(models.Model):
     security_answer_1 = models.CharField(max_length=255)
     security_answer_2 = models.CharField(max_length=255)
     security_answer_3 = models.CharField(max_length=255)
+    plaid_token = models.CharField(max_length=255, blank=True, null=True)
