@@ -15,11 +15,12 @@ from plaid.model.plaid_error import PlaidError
 from plaid.model.products import Products
 from plaid.model.transactions_get_request import TransactionsGetRequest
 from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
+from unicodedata import category
 
 import env.env
 from MoneyParce.forms import ExpenseForm, IncomeForm
 from accounts.models import CustomUser
-from MoneyParce.models import Expense, Income, Budget
+from MoneyParce.models import Expense, Income, Budget, expense_categories
 from django.contrib import messages
 from django.db.models import Sum
 
@@ -137,15 +138,19 @@ def sync_transactions(request):
             if not Expense.objects.filter(transaction_id=t.transaction_id, user=request.user).exists():
                 refresh = True
                 # Create a new Expense object
+                categories = [item[0] for item in expense_categories if item[1] == t.category[0]]
+
                 expense = Expense(
                     user=request.user,
                     amount= abs(t.amount),
                     description=t.name,
                     date=t.authorized_date,
-                    category=t.category[0] if t.category else 'Other',
+                    category= categories[0] if len(categories) != 0 else 'OTHER',
                     transaction_id=t.transaction_id
                 )
                 expense.save()
+
+
 
         if refresh:
             return redirect("transactions.index")
