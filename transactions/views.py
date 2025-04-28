@@ -17,7 +17,12 @@ from plaid.model.transactions_get_request_options import TransactionsGetRequestO
 
 import env.env
 from MoneyParce.forms import ExpenseForm, IncomeForm
-from MoneyParce.models import Expense, Income
+from MoneyParce.models import Expense, Income, Budget
+
+from django.contrib import messages
+from django.db.models import Sum
+
+#from MoneyParce.utils import check_budget_status
 
 
 @login_required
@@ -48,6 +53,8 @@ def add_transaction(request):
                 expense = expense_form.save(commit=False)
                 expense.user = request.user
                 expense.save()
+
+                check_budget_status(request, expense)
         elif 'add_income' in request.POST:
             income_form = IncomeForm(request.POST)
             if income_form.is_valid():
@@ -56,6 +63,22 @@ def add_transaction(request):
                 income.save()
 
     return redirect("transactions.index")
+
+def check_budget_status(request, expense):
+    try:
+        budget = Budget.objects.get(user=request.user, category=expense.category)
+    except Budget.DoesNotExist:
+        return
+
+    total_spent = Expense.objects.filter(user=request.user, category=expense.category).aggregate(total=Sum('amount'))['total'] or 0
+
+    percent_used = (total_spent / budget.limit) * 100 if budget.limit > 0 else 0
+
+    if percent_used >= 100:
+        messages.error(request, f"🔥 You are OVER your budget for {budget.category}!")
+    elif percent_used >= 75:
+        messages.warning(request, f"⚠️ You are close to your budget limit for {budget.category}!")
+
 
 @login_required
 def remove_transaction(request, transaction_id, transaction_type):

@@ -1,12 +1,101 @@
-<!DOCTYPE html>
-<html>
 {% extends 'base-test.html' %}
-{% load static %}
+
 {% block content %}
-<body>
-    <div class="section-title">
-        <h2>Budgets</h2>
+<div class="container my-5">
+    <h1 class="mb-4">My Budgets</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Limit ($)</th>
+                <th>Spent ($)</th>
+                <th>% Used</th>
+                <th>Progress</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for budget in budgets %}
+            <tr>
+                <td>{{ budget.category }}</td>
+                <td>${{ budget.limit }}</td>
+                <td>${{ budget.amount_spent }}</td>
+                <td>{{ budget.percent_used }}%</td>
+                <td style="min-width: 200px;">
+                    <div class="progress">
+                        <div class="progress-bar
+                            {% if budget.percent_used >= 100 %}
+                                bg-danger
+                            {% elif budget.percent_used >= 75 %}
+                                bg-warning
+                            {% else %}
+                                bg-success
+                            {% endif %}
+                        " role="progressbar" style="width: {{ budget.percent_used|floatformat:0 }}%;" aria-valuenow="{{ budget.percent_used|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ budget.percent_used|floatformat:0 }}%
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <form method="post" action="{% url 'budget.delete' budget.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="mt-5">Add New Budget</h2>
+    <form method="post" class="mt-3">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Limit:</label>
+            <input type="number" name="limit" step="0.01" class="form-control" required>
+        </div>
+        <div class="form-group mt-2">
+            <label>Category:</label>
+            <select name="category" class="form-control" required>
+                <option value="FOOD">Food</option>
+                <option value="TRANSPORT">Transport</option>
+                <option value="ENTERTAINMENT">Entertainment</option>
+                <option value="UTILITIES">Utilities</option>
+                <option value="HEALTH">Health</option>
+                <option value="OTHER">Other</option>
+                <option value="ALL">All</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Add/Update Budget</button>
+    </form>
+</div>
+
+{% if messages %}
+<div class="modal fade" id="budgetWarningModal" tabindex="-1" aria-labelledby="budgetWarningModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title" id="budgetWarningModalLabel">Budget Warning</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+      </div>
     </div>
-</body>
-{% endblock content %}
-</html>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var warningModal = new bootstrap.Modal(document.getElementById('budgetWarningModal'));
+    warningModal.show();
+});
+</script>
+{% endif %}
+
+{% endblock %}

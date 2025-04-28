@@ -1,12 +1,72 @@
-<!DOCTYPE html>
-<html>
 {% extends 'base-test.html' %}
 {% load static %}
+
 {% block content %}
-<body>
-    <div class="section-title">
-        <h2>Frequently Asked Questions</h2>
-    </div>
-</body>
+<style>
+  /* Container */
+  .faq-section {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .faq-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Accordion items */
+  .faq-item {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    background: #f9f9f9;
+    overflow: hidden;
+  }
+
+  .faq-item summary {
+    list-style: none;           /* remove default marker */
+    cursor: pointer;
+    padding: 1rem;
+    font-weight: 600;
+    position: relative;
+  }
+
+  /* custom arrow */
+  .faq-item summary::after {
+    content: '▼';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
+  }
+
+  /* rotate arrow when open */
+  .faq-item[open] summary::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  /* answer panel */
+  .faq-answer {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    background: #fff;
+  }
+</style>
+
+<section class="faq-section">
+  <h1 class="faq-title">{{ template_data.title }}</h1>
+  <div class="faq-list">
+    {% for item in faqs %}
+      <details class="faq-item"{% if forloop.first %} open{% endif %}>
+        <summary>{{ item.question }}</summary>
+        <div class="faq-answer">
+          <p>{{ item.answer }}</p>
+        </div>
+      </details>
+    {% endfor %}
+  </div>
+</section>
 {% endblock content %}
-</html>
