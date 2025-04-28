@@ -3,6 +3,9 @@
 {% extends 'base-test.html' %}
 {% load static %}
 {% block content %}
+  <div class="section-title">
+    <h2>Overview</h2>
+  </div>
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
       {#body { font-family: Arial, sans-serif; padding: 20px; }#}
@@ -44,9 +47,6 @@
     </script>
 
     <header class="masthead bg-index text-white text-center py-4">
-        <div class="container d-flex align-items-center flex-column pt-2">
-            <h1 class="section-title">Overview</h1>
-        </div>
     </header>
     <div class="p-3 ">
         <div class="container text-black text-center">
@@ -76,10 +76,6 @@
 
             </div>
         </div>
-<body>
-    <div class="section-title">
-        <h2>Overview</h2>
-    </div>
 </body>
 {% endblock content %}
 </html>

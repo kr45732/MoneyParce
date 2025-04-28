@@ -3,20 +3,24 @@
 {% extends 'base-test.html' %}
 {% load static %}
 {% block content %}
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+
 <body>
     <div class="section-title">
         <h2>Income and Expenses</h2>
     </div>
 
     <div class="add-transaction-and-link-bank-buttons">
-        <button>Add transaction [To-do]</button>
-        <button>Link to bank [To-do]</button>
+        <button id="link-button" class="btn btn-dark">Link bank</button>
     </div>
 
     <div class="income-and-expenses-block">
         <div class="expenses-block">
             <h2>Expenses</h2>
-            <table>
+            <table class="table table-hover table-striped">
                 <tr>
                     <th>Date</th>
                     <th>Description</th>
@@ -38,20 +42,11 @@
                 </tr>
                 {% endfor %}
             </table>
-
-            <div class="add-expense-block">
-                <h2>Add Expense</h2>
-                <form method="post" action="{% url 'transactions.add_transaction' %}">
-                    {% csrf_token %}
-                    {{ expense_form.as_p }}
-                    <button type="submit" name="add_expense">Add Expense</button>
-                </form> 
-            </div>
         </div>
         
         <div class="income-block">
             <h2>Incomes</h2>
-            <table>
+            <table class="table table-hover table-striped">
                 <tr>
                     <th>Date</th>
                     <th>Description</th>
@@ -71,23 +66,41 @@
                 </tr>
                 {% endfor %}
             </table>
-
-            <div class="add-income-block">
-                <h2>Add Income</h2>
-                <form method="post" action="{% url 'transactions.add_transaction' %}">
-                    {% csrf_token %}
-                    {{ income_form.as_p }}
-                    <button type="submit" name="add_income">Add Income</button>
-                </form>
-            </div>
         </div>
-
     </div>
 
+    <div class="add-transaction-block">
+        <div class="add-expense-block">
+            <h2>Add Expense</h2>
+            <form method="post" action="{% url 'transactions.add_transaction' %}">
+                {% csrf_token %}
+                {{ expense_form.as_p }}
+                <button class="btn btn-primary" type="submit" name="add_expense">Add Expense</button>
+            </form> 
+        </div>
+        <div class="add-income-block">
+            <h2>Add Income</h2>
+            <form method="post" action="{% url 'transactions.add_transaction' %}">
+                {% csrf_token %}
+                {{ income_form.as_p }}
+                <button class="btn btn-primary" type="submit" name="add_income">Add Income</button>
+            </form>
+        </div>
+    </div>
     <!--
-    <button id="link-button" class="btn btn-primary">Link Your Bank</button>
+    <form>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Amount</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter amount">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Description</label>
+          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Description">
+        </div>
+        <button type="submit" class="btn btn-primary" name="add_expense">Add Expense</button>
+      </form>
+    -->
 
-    </main>
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
     <script>
         document.getElementById('link-button').addEventListener('click', async function () {
@@ -134,7 +147,7 @@
 
         });
     </script>
--->
+
 </body>
 {% endblock content %}
 </html>
