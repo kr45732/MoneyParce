@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 import json
 from datetime import datetime, timedelta, date
 
@@ -17,20 +18,17 @@ from plaid.model.transactions_get_request_options import TransactionsGetRequestO
 
 import env.env
 from MoneyParce.forms import ExpenseForm, IncomeForm
-from MoneyParce.models import Expense, Income
 from accounts.models import CustomUser
+from MoneyParce.models import Expense, Income, Budget
+from django.contrib import messages
+from django.db.models import Sum
 
 
-# Create your views here.
+
+@login_required
+
 def index(request):
-
-    # redirect does not work for admins
-    if (not request.user.is_authenticated):
-        return redirect("accounts.login")
-
-    template_data = {
-        'title': 'Transactions',
-    }
+    template_data = {'title': 'Transactions'}
 
     expense_form = ExpenseForm()
     income_form = IncomeForm()
@@ -52,14 +50,8 @@ def index(request):
         'bank_linked': bank_linked,
     })
 
-
+@login_required
 def add_transaction(request):
-
-    # Test user, DELETE ONCE LOGIN IS IMPLEMENTED!!
-    if not request.user.is_authenticated:
-        user, created = User.objects.get_or_create(username='exampleuser')
-        request.user = user
-
     if request.method == 'POST':
         if 'add_expense' in request.POST:
             expense_form = ExpenseForm(request.POST)
@@ -67,6 +59,8 @@ def add_transaction(request):
                 expense = expense_form.save(commit=False)
                 expense.user = request.user
                 expense.save()
+
+                check_budget_status(request, expense)
         elif 'add_income' in request.POST:
             income_form = IncomeForm(request.POST)
             if income_form.is_valid():
@@ -76,13 +70,24 @@ def add_transaction(request):
 
     return redirect("transactions.index")
 
-def remove_transaction(request, transaction_id, transaction_type):
-    if not request.user.is_authenticated:
-        user, created = User.objects.get_or_create(username='exampleuser')
-        request.user = user
-        # redirect user in production
-        # return redirect("login")
+def check_budget_status(request, expense):
+    try:
+        budget = Budget.objects.get(user=request.user, category=expense.category)
+    except Budget.DoesNotExist:
+        return
 
+    total_spent = Expense.objects.filter(user=request.user, category=expense.category).aggregate(total=Sum('amount'))['total'] or 0
+
+    percent_used = (total_spent / budget.limit) * 100 if budget.limit > 0 else 0
+
+    if percent_used >= 100:
+        messages.error(request, f"🔥 You are OVER your budget for {budget.category}!")
+    elif percent_used >= 75:
+        messages.warning(request, f"⚠️ You are close to your budget limit for {budget.category}!")
+
+
+@login_required
+def remove_transaction(request, transaction_id, transaction_type):
     if transaction_type == 'expense':
         transaction = get_object_or_404(Expense, id=transaction_id, user=request.user)
     elif transaction_type == 'income':

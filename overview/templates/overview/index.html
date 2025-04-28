@@ -1,17 +1,83 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+{% extends 'base-test.html' %}
+{% load static %}
 {% block content %}
+  <div class="section-title">
+    <h2>Overview</h2>
+  </div>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+      {#body { font-family: Arial, sans-serif; padding: 20px; }#}
+      {#.controls { margin-bottom: 20px; }#}
+      .charts { display: flex; flex-wrap: wrap; gap: 0px; }
+      {#.chart { flex: 1 1 45%; }#}
+      {#.full-width { width: 100%; }#}
+    </style>
+    <script>
+      google.charts.load('current', { packages: ['corechart'] });
+      google.charts.setOnLoadCallback(drawCharts);
+
+      function drawCharts() {
+        const pieData = google.visualization.arrayToDataTable({{ pie_chart_data|safe }});
+        const expData = google.visualization.arrayToDataTable({{ line_chart_data_expenses|safe }});
+        const incomeData = google.visualization.arrayToDataTable({{ line_chart_data_income|safe }});
+
+        const pieOptions = {
+          title: 'Expenses by Category',
+          pieHole: 0.4,
+          width: 500,
+          height: 400
+        };
+        const lineOptions = {
+          curveType: 'function',
+          legend: { position: 'bottom' },
+          width: 600,
+          height: 400
+        };
+
+        new google.visualization.PieChart(document.getElementById('piechart')).draw(pieData, pieOptions);
+        new google.visualization.LineChart(document.getElementById('linechart_expense')).draw(expData, {
+          ...lineOptions, title: 'Expenses Over Time'
+        });
+        new google.visualization.LineChart(document.getElementById('linechart_income')).draw(incomeData, {
+          ...lineOptions, title: 'Income Over Time'
+        });
+      }
+    </script>
+
     <header class="masthead bg-index text-white text-center py-4">
-        <div class="container d-flex align-items-center flex-column pt-2">
-            <h1 class="section-title">Overview</h1>
-        </div>
     </header>
     <div class="p-3">
-        <div class="container">
-            <div class="row mt-3">
-                <div class="col mx-auto text-center mb-3">
-                    <h4>Overview Stuff</h4>
-                </div>
+        <div class="container text-black text-center">
+            <form method="get" class="controls">
+              <label>Date Range:
+                <select name="date_filter">
+                  <option value="last_7_days" {% if date_filter == 'last_7_days' %}selected{% endif %}>Last 7 Days</option>
+                  <option value="this_month" {% if date_filter == 'this_month' %}selected{% endif %}>This Month</option>
+                  <option value="last_month" {% if date_filter == 'last_month' %}selected{% endif %}>Last Month</option>
+                </select>
+              </label>
+              <label>Group By:
+                <select name="group_by">
+                  <option value="daily" {% if group_by == 'daily' %}selected{% endif %}>Daily</option>
+                  <option value="weekly" {% if group_by == 'weekly' %}selected{% endif %}>Weekly</option>
+                  <option value="monthly" {% if group_by == 'monthly' %}selected{% endif %}>Monthly</option>
+                </select>
+              </label>
+              <button type="submit">Update</button>
+            </form>
+
+            <div class="charts d-flex justify-content-center">
+                {% if not empty_expense %}
+                    <div id="linechart_expense" class="chart"></div>
+                {%  endif %}
+                {% if not empty_income %}
+                <div id="linechart_income" class="chart"></div>
+                {%  endif %}
+                <div id="piechart" class="chart"></div>
+
             </div>
         </div>
-    </div>
 {% endblock content %}
+</html>

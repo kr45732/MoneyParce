@@ -1,64 +1,107 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+
+{% extends 'base-test.html' %}
+{% load static %}
 {% block content %}
-    <header class="masthead bg-index text-white text-center py-4">
-        <div class="container d-flex align-items-center flex-column pt-2">
-            <h1 class="section-title">Income and Expenses</h1>
+
+<div class="section-title">
+    <h2>Income and Expenses</h2>
+</div>
+
+    <div class="add-transaction-and-link-bank-buttons">
+        <button id="link-button" class="btn btn-dark">Link bank</button>
+    </div>
+
+    <div class="income-and-expenses-block">
+        <div class="expenses-block">
+            <h2>Expenses</h2>
+            <table class="table table-hover table-striped">
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                </tr>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.description }}</td>
+                    <td>${{ expense.amount }}</td>
+                    <td>{{ expense.category }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No expenses found</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
-    </header>
-    <main>
-        <h2>Expenses</h2>
-        <ul>
-            {% for expense in expenses %}
-                <li style="display: flex; align-items: center; gap: 4px">
-                    <p style="margin: 0">{{ expense.date }} - {{ expense.description }}: ${{ expense.amount }} ({{ expense.category }})</p>
-                     <form method="post" action="{% url 'transactions.remove_transaction' 'expense' expense.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </li>
-            {% empty %}
-                <li>No expenses found.</li>
-            {% endfor %}
-        </ul>
 
-        <h2>Incomes</h2>
-        <ul>
-            {% for income in incomes %}
-                <li style="display: flex; align-items: center; gap: 4px">
-                    <p style="margin: 0">{{ income.date }} - {{ income.description }}: ${{ income.amount }}</p>
-                    <form method="post" action="{% url 'transactions.remove_transaction' 'income' income.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </li>
-            {% empty %}
-                <li>No incomes found.</li>
-            {% endfor %}
-        </ul>
+        <div class="income-block">
+            <h2>Incomes</h2>
+            <table class="table table-hover table-striped">
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+                {% for income in incomes %}
+                <tr>
+                    <td>{{ income.date }}</td>
+                    <td>{{ income.description }}</td>
+                    <td>${{ income.amount }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No incomes found</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 
-        <div>
-            <h1>Add Transaction</h1>
+    <div class="add-transaction-block">
+        <div class="add-expense-block">
             <h2>Add Expense</h2>
             <form method="post" action="{% url 'transactions.add_transaction' %}">
                 {% csrf_token %}
                 {{ expense_form.as_p }}
-                <button type="submit" name="add_expense">Add Expense</button>
+                <button class="btn btn-primary" type="submit" name="add_expense">Add Expense</button>
             </form>
-
+        </div>
+        <div class="add-income-block">
             <h2>Add Income</h2>
             <form method="post" action="{% url 'transactions.add_transaction' %}">
                 {% csrf_token %}
                 {{ income_form.as_p }}
-                <button type="submit" name="add_income">Add Income</button>
+                <button class="btn btn-primary" type="submit" name="add_income">Add Income</button>
             </form>
         </div>
+    </div>
+    <!--
+    <form>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Amount</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter amount">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Description</label>
+          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Description">
+        </div>
+        <button type="submit" class="btn btn-primary" name="add_expense">Add Expense</button>
+      </form>
+    -->
 
-        <h2>Link Your Bank Account</h2>
-        {% if bank_linked %}
-            <button id="sync-button" class="btn btn-primary">Sync Transactions</button>
-        {% else %}
-            <button id="link-button" class="btn btn-primary">Link Your Bank</button>
-        {% endif %}
+{#        <h2>Link Your Bank Account</h2>#}
+{#        {% if bank_linked %}#}
+{#            <button id="sync-button" class="btn btn-primary">Sync Transactions</button>#}
+{#        {% else %}#}
+{#            <button id="link-button" class="btn btn-primary">Link Your Bank</button>#}
+{#        {% endif %}#}
 
     </main>
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
@@ -134,6 +177,35 @@
 
 
     </script>
+    });
+</script>
+{% if messages %}
+<div class="modal fade" id="budgetWarningModal" tabindex="-1" aria-labelledby="budgetWarningModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title" id="budgetWarningModalLabel">Budget Warning</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var warningModal = new bootstrap.Modal(document.getElementById('budgetWarningModal'));
+    warningModal.show();
+});
+</script>
+{% endif %}
 {% endblock content %}
 
 
