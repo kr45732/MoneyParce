@@ -61,6 +61,7 @@ def add_transaction(request):
                 expense.save()
 
                 check_budget_status(request, expense)
+
         elif 'add_income' in request.POST:
             income_form = IncomeForm(request.POST)
             if income_form.is_valid():
@@ -138,7 +139,7 @@ def sync_transactions(request):
                 # Create a new Expense object
                 expense = Expense(
                     user=request.user,
-                    amount=t.amount,
+                    amount= abs(t.amount),
                     description=t.name,
                     date=t.authorized_date,
                     category=t.category[0] if t.category else 'Other',

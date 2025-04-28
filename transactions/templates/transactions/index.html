@@ -9,7 +9,12 @@
 </div>
 
     <div class="add-transaction-and-link-bank-buttons">
-        <button id="link-button" class="btn btn-dark">Link bank</button>
+        {% if bank_linked %}
+            <button id="sync-button" class="btn btn-dark">Sync Transactions</button>
+
+        {% else %}
+            <button id="link-button" class="btn btn-dark">Link bank</button>
+        {% endif %}
     </div>
 
     <div class="income-and-expenses-block">
@@ -96,14 +101,6 @@
       </form>
     -->
 
-{#        <h2>Link Your Bank Account</h2>#}
-{#        {% if bank_linked %}#}
-{#            <button id="sync-button" class="btn btn-primary">Sync Transactions</button>#}
-{#        {% else %}#}
-{#            <button id="link-button" class="btn btn-primary">Link Your Bank</button>#}
-{#        {% endif %}#}
-
-    </main>
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
     <script>
         const isBankLinked = {{ bank_linked|yesno:"true,false" }};
@@ -177,34 +174,33 @@
 
 
     </script>
-    });
-</script>
+
 {% if messages %}
-<div class="modal fade" id="budgetWarningModal" tabindex="-1" aria-labelledby="budgetWarningModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-warning">
-        <h5 class="modal-title" id="budgetWarningModalLabel">Budget Warning</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        {% for message in messages %}
-          <p>{{ message }}</p>
-        {% endfor %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+    <div class="modal fade" id="budgetWarningModal" tabindex="-1" aria-labelledby="budgetWarningModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-warning">
+            <h5 class="modal-title" id="budgetWarningModalLabel">Budget Warning</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var warningModal = new bootstrap.Modal(document.getElementById('budgetWarningModal'));
-    warningModal.show();
-});
-</script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var warningModal = new bootstrap.Modal(document.getElementById('budgetWarningModal'));
+        warningModal.show();
+    });
+    </script>
 {% endif %}
 {% endblock content %}
 
