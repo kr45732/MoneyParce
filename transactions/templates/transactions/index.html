@@ -32,7 +32,7 @@
                     <td>{{ expense.date }}</td>
                     <td>{{ expense.description }}</td>
                     <td>${{ expense.amount }}</td>
-                    <td>{{ expense.category }}</td>
+                    <td>{{ expense.category.title }}</td>
                 </tr>
                 {% empty %}
                 <tr>
