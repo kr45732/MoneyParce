@@ -3,6 +3,7 @@ from MoneyParce.models import Expense, Budget
 from MoneyParce.utils import check_budget_status
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 
 @login_required
 def index(request):
@@ -30,7 +31,16 @@ def index(request):
         category = request.POST.get('category')
 
         if limit and category:
-            Budget.objects.create(user=request.user, limit=limit, category=category)
+            # Try to find an existing budget for this user and category
+            budget, created = Budget.objects.get_or_create(
+                user=request.user,
+                category=category,
+                defaults={'limit': limit}
+            )
+            if not created:
+                # If the budget already existed, update the limit
+                budget.limit = limit
+                budget.save()
 
         return redirect('budget.index')
 
@@ -38,3 +48,9 @@ def index(request):
         'budgets': budgets,
         'template_data': template_data,
     })
+
+@login_required
+def delete_budget(request, budget_id):
+    budget = get_object_or_404(Budget, id=budget_id, user=request.user)
+    budget.delete()
+    return redirect('budget.index')
