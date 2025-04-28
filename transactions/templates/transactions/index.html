@@ -26,6 +26,7 @@
                     <th>Description</th>
                     <th>Amount</th>
                     <th>Category</th>
+                    <th>Action</th>
                 </tr>
                 {% for expense in expenses %}
                 <tr>
@@ -33,6 +34,12 @@
                     <td>{{ expense.description }}</td>
                     <td>${{ expense.amount }}</td>
                     <td>{{ expense.category.title }}</td>
+                    <td>
+                        <form method="post" action="{% url 'transactions.remove_transaction' 'expense' expense.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
@@ -51,12 +58,19 @@
                     <th>Date</th>
                     <th>Description</th>
                     <th>Amount</th>
+                    <th>Action</th>
                 </tr>
                 {% for income in incomes %}
                 <tr>
                     <td>{{ income.date }}</td>
                     <td>{{ income.description }}</td>
                     <td>${{ income.amount }}</td>
+                    <td>
+                        <form method="post" action="{% url 'transactions.remove_transaction' 'income' income.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
