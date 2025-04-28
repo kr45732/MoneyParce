@@ -35,7 +35,7 @@ class Expense(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.username}'s Budget for {self.category}: ${self.limit}"
+        return f"{self.user.username} - {self.description}: +${self.amount}"
 
 
 class Income(models.Model):
