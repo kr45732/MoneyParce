@@ -1,0 +1,181 @@
+* {
+    box-sizing: inherit;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    font: 1.2em sans-serif;
+    margin: 0px;
+}
+
+.wrapper {
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+.page-header {
+    color: #fff;
+    margin-left: 0px;
+    background-size: 100% auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black !important;
+    color: black;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    height: 75.733px;
+    padding-bottom: 0px !important;
+}
+
+.page-footer {
+    background-color: #9AC2FA;
+    color: #fff;
+    padding: 20px;
+    margin-left: 0px;
+    background-size: 100% auto;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    border: 1px solid black;
+}
+
+.page-body {
+    padding: 20px;
+}
+
+.page-body p {
+    border: 1px solid grey;
+}
+
+.logo-text {
+    text-align: center;
+    height: 100%;
+    align-content: center;
+    flex-grow: 1.5;
+    border-left: 1px solid black;
+    font-size: x-large;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #9AC2FA;
+}
+
+.icon-and-text {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    align-content: center;
+    text-align: center;
+    border-left: 1px solid black;
+    align-items: center;
+}
+
+.icon {
+    flex-grow: 1;
+    margin: 0px;
+    align-self: center;
+    align-content: center;
+}
+
+.icon-text {
+    flex-grow: 1;
+    margin: 0px;
+    align-self: center;
+    text-decoration: none;
+    font-size: large;
+    color: black !important;
+}
+
+.section-title {
+    color: black;
+    text-align: center;
+    border: 1px solid black;
+    padding: 0px;
+    margin: 20px 15%;
+}
+
+.footer-section {
+    flex-grow: 1;
+    padding: 10px;
+    color: black;
+}
+
+.black-hline {
+    color: black;
+    border-color: black;
+}
+
+.income-and-expenses-block {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    justify-content: space-evenly;
+}
+
+.expenses-block {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 50%;
+    margin: 10px;
+}
+
+.income-block {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+    width: 50%;
+    margin: 10px;
+}
+
+.add-expense-block {
+    text-align: left;
+    flex-grow: 1;
+    width: 50%;
+    margin: 10px;
+}
+
+.add-income-block {
+    text-align: left;
+    flex-grow: 1;
+    margin: 10px;
+    width: 50%;
+}
+
+table, tr, th, td {
+    text-align: left;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.add-transaction-block {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+    justify-content: space-evenly;
+}
+
+.add-transaction-and-link-bank-buttons {
+    margin: 10px;
+}
+
+.charts {
+    border: 1px solid black;
+    background-color: #9AC2FA;
+}
+
+
+.chart {
+    border: 1px solid black;
+    margin: 20px;
+}
+

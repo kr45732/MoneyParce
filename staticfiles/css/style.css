@@ -1,0 +1,82 @@
+.bg-index {
+    background-color: white;
+    background-size: 100% auto;
+    margin-left: 10%;
+    margin-right: 10%;
+    border: black;
+    border-radius: 4px;
+    border-style: solid;
+}
+
+.navbar a.nav-link {
+    color: #FFFEF6 !important;
+    border: #202020;
+    border-width: 2px;
+}
+
+.bg-dark {
+    background-color: gray !important;
+}
+
+.ms-footer {
+    background-color: gray;
+}
+
+.ms-footer p {
+    color: #7F7F7F;
+    font-size: 13px;
+}
+
+.ms-footer a:hover {
+    color: #6ab43e;
+    text-decoration: none;
+}
+
+.ms-footer-bottom span {
+    font-size: 13px;
+    line-height: 38px;
+}
+
+.ms-footer-bottom a {
+    color: #6ab43e;
+    text-decoration: none;
+}
+
+.ms-footer-bottom a:hover {
+    color: #fff;
+}
+
+
+.container {
+    color: white;
+    flex: auto;
+    align-content: center;
+}
+
+.logo-text {
+    color: black;
+    size: 40px;
+    font-size: x-large;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.section-title {
+    color: black;
+    align-items: center;
+}
+
+.nav-icon-and-text {
+    color: white;
+    size: 40px;
+    align-content: center;
+    flex: 50%;
+    border-style: solid;
+    border: #202020;
+    border-radius: 2px;
+}
+
+.p-3.navbar.navbar-dark.bg-dark.navbar-expand-lg {
+    color: #6ab43e;
+    background-color: #6ab43e !important;
+    align-items: stretch;
+}
