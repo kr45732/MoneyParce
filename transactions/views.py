@@ -1,8 +1,6 @@
 from django.contrib.auth.decorators import login_required
 import json
 from datetime import datetime, timedelta, date
-
-from django.contrib.auth.models import User
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from plaid import Configuration
@@ -15,9 +13,8 @@ from plaid.model.plaid_error import PlaidError
 from plaid.model.products import Products
 from plaid.model.transactions_get_request import TransactionsGetRequest
 from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
-from unicodedata import category
 
-import env.env
+import env
 from MoneyParce.forms import ExpenseForm, IncomeForm
 from accounts.models import CustomUser
 from MoneyParce.models import Expense, Income, Budget, expense_categories
@@ -103,10 +100,10 @@ def remove_transaction(request, transaction_id, transaction_type):
 def sync_transactions(request):
     try:
         configuration = Configuration(
-            host=env.env.PLAID_ENV,
+            host=env.PLAID_ENV,
             api_key={
-                'clientId': env.env.PLAID_CLIENT_ID,
-                'secret': env.env.PLAID_SECRET,
+                'clientId': env.PLAID_CLIENT_ID,
+                'secret': env.PLAID_SECRET,
             }
         )
         api_client = plaid_api.ApiClient(configuration)
@@ -168,10 +165,10 @@ def create_link_token(request):
 
     # Configure the Plaid client
     configuration = Configuration(
-        host=env.env.PLAID_ENV,
+        host=env.PLAID_ENV,
         api_key={
-            'clientId': env.env.PLAID_CLIENT_ID,
-            'secret': env.env.PLAID_SECRET,
+            'clientId': env.PLAID_CLIENT_ID,
+            'secret': env.PLAID_SECRET,
         }
     )
     api_client = plaid_api.ApiClient(configuration)
@@ -203,10 +200,10 @@ def exchange_public_token(request):
 
             # Configure the Plaid client
             configuration = Configuration(
-                host=env.env.PLAID_ENV,
+                host=env.PLAID_ENV,
                 api_key={
-                    'clientId': env.env.PLAID_CLIENT_ID,
-                    'secret': env.env.PLAID_SECRET,
+                    'clientId': env.PLAID_CLIENT_ID,
+                    'secret': env.PLAID_SECRET,
                 }
             )
             api_client = plaid_api.ApiClient(configuration)
